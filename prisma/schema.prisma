@@ -1,0 +1,92 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+model Location {
+  id        String   @id @default(cuid())
+  name      String // e.g. "London Heathrow T5"
+  slug      String   @unique
+  address   String
+  city      String
+  postcode  String
+  latitude  Decimal?
+  longitude Decimal?
+
+  cars           Car[]
+  pickupBookings Booking[] @relation("PickupLocation")
+  returnBookings Booking[] @relation("ReturnLocation")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Car {
+  id          String  @id @default(cuid())
+  brand       String
+  model       String
+  category    String // SUV, Sedan, Luxury, Electric, etc.
+  pricePerDay Decimal
+  image       String
+  description String?
+  available   Boolean @default(true)
+
+  // Location Relation
+  locationId String
+  location   Location @relation(fields: [locationId], references: [id])
+
+  // Specs
+  transmission String // Automatic, Manual
+  fuelType     String // Petrol, Diesel, Electric, Hybrid
+  seats        Int
+  mileage      String?
+
+  bookings Booking[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Booking {
+  id         String        @id @default(cuid())
+  startDate  DateTime
+  endDate    DateTime
+  totalPrice Decimal
+  status     BookingStatus @default(PENDING)
+
+  // Customer Details (No Auth)
+  customerName  String
+  customerEmail String
+  customerPhone String?
+
+  // Relations
+  carId String
+  car   Car    @relation(fields: [carId], references: [id])
+
+  pickupLocationId String
+  pickupLocation   Location @relation("PickupLocation", fields: [pickupLocationId], references: [id])
+
+  returnLocationId String
+  returnLocation   Location @relation("ReturnLocation", fields: [returnLocationId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
