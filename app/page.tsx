@@ -1,66 +1,76 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client"
+import { Box, Button, Container, Flex, Heading, Input, SimpleGrid, Stack, Text } from "@chakra-ui/react"
+import { cars } from "./data/cars"
+import { CarCard } from "./components/CarCard"
+import Link from "next/link"
 
 export default function Home() {
+  const featuredCars = cars.slice(0, 3)
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+    <Box>
+      {/* Hero Section */}
+      <Box bg="blue.600" color="white" py={{ base: "20", md: "32" }} position="relative" overflow="hidden">
+        <Container maxW="8xl" position="relative" zIndex="1">
+          <Stack gap="6" maxW="2xl">
+            <Heading size="4xl" fontWeight="bold" lineHeight="1.2">
+              Find Your Perfect <br />
+              <Text as="span" color="blue.200">Drive Today</Text>
+            </Heading>
+            <Text fontSize="xl" color="blue.100">
+              Premium car rentals at affordable prices. Choose from our wide range of luxury and economy vehicles.
+            </Text>
+
+            {/* Search Box */}
+            <Box bg="white" p="6" borderRadius="xl" shadow="xl" color="gray.800" mt="8">
+              <Stack direction={{ base: "column", md: "row" }} gap="4">
+                <Input placeholder="Pickup Location" size="lg" variant="outline" />
+                <Input placeholder="Pickup Date" type="date" size="lg" variant="outline" />
+                <Input placeholder="Return Date" type="date" size="lg" variant="outline" />
+                <Button size="lg" colorPalette="blue" px="8">Search</Button>
+              </Stack>
+            </Box>
+          </Stack>
+        </Container>
+      </Box>
+
+      {/* Featured Cars */}
+      <Container maxW="8xl" py="20">
+        <Flex justify="space-between" align="center" mb="10">
+          <Heading size="2xl">Featured Vehicles</Heading>
+          <Link href="/cars">
+            <Button variant="ghost" colorPalette="blue">View All Cars</Button>
+          </Link>
+        </Flex>
+
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap="8">
+          {featuredCars.map(car => (
+            <CarCard key={car.id} car={car} />
+          ))}
+        </SimpleGrid>
+      </Container>
+
+      {/* How it Works */}
+      <Box bg="gray.50" py="20">
+        <Container maxW="8xl">
+          <Heading size="2xl" textAlign="center" mb="16">How It Works</Heading>
+          <SimpleGrid columns={{ base: 1, md: 3 }} gap="12">
+            {[
+              { title: "Choose Car", desc: "Browse our extensive fleet and pick the perfect car for your trip." },
+              { title: "Book Dates", desc: "Select your pickup and return dates with our easy booking system." },
+              { title: "Hit the Road", desc: "Pick up your car from one of our convenient locations and enjoy." }
+            ].map((step, i) => (
+              <Stack key={i} align="center" textAlign="center" gap="4">
+                <Box w="16" h="16" bg="blue.100" color="blue.600" borderRadius="full" display="flex" alignItems="center" justifyContent="center" fontSize="2xl" fontWeight="bold">
+                  {i + 1}
+                </Box>
+                <Heading size="lg">{step.title}</Heading>
+                <Text color="gray.600">{step.desc}</Text>
+              </Stack>
+            ))}
+          </SimpleGrid>
+        </Container>
+      </Box>
+    </Box>
+  )
 }
